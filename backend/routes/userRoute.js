@@ -6,30 +6,47 @@ const { body, validationResult } = require("express-validator");
 
 const router = express.Router();
 
-router.post("/signin", async (req, res) => {
-  const email = req.body.email;
-  const password = req.body.password;
-  const signinUser = await User.findOne({
-    email: email,
-  });
-  if (signinUser) {
-    const passisequal = await bcrypt.compare(password, signinUser.password);
-    // console.log(passisequal);
-    if (passisequal) {
-      res.send({
-        _id: signinUser.id,
-        name: signinUser.name,
-        email: signinUser.email,
-        isAdmin: signinUser.isAdmin,
-        token: getToken(signinUser),
-      });
+router.post(
+  "/signin",
+  [
+    body("email")
+      .not()
+      .isEmpty()
+      .withMessage("Email Cannot be Empty")
+      .isEmail()
+      .withMessage("Not a Email"),
+    body("password")
+      .not()
+      .isEmpty()
+      .withMessage("Password Cannot be Empty")
+      .isLength({ min: 8, max: 32 })
+      .withMessage("Password Length should be between 8 and 32 characters"),
+  ],
+  async (req, res) => {
+    const email = req.body.email;
+    const password = req.body.password;
+    const signinUser = await User.findOne({
+      email: email,
+    });
+    if (signinUser) {
+      const passisequal = await bcrypt.compare(password, signinUser.password);
+      // console.log(passisequal);
+      if (passisequal) {
+        res.send({
+          _id: signinUser.id,
+          name: signinUser.name,
+          email: signinUser.email,
+          isAdmin: signinUser.isAdmin,
+          token: getToken(signinUser),
+        });
+      } else {
+        res.status(401).send({ msg: "Wrong Password" });
+      }
     } else {
-      res.status(401).send({ msg: "Wrong Password" });
+      res.status(401).send({ msg: "Invalid Email" });
     }
-  } else {
-    res.status(401).send({ msg: "Invalid Email" });
   }
-});
+);
 
 router.post(
   "/register",
