@@ -89,7 +89,7 @@ router.post(
         _id: newUser.id,
         name: newUser.name,
         email: newUser.email,
-        isUser: newUser.isUser,
+        isAdmin: newUser.isAdmin,
         token: getToken(newUser),
       });
     } else {
@@ -104,7 +104,7 @@ router.get("/createadmin", async (req, res) => {
       name: "Satyaki",
       email: "sat@ki.com",
       password: "12345",
-      isadmin: true,
+      isAdmin: true,
     });
 
     const newUser = await user.save();
