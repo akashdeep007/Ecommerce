@@ -20,7 +20,7 @@ router.post("/signin", async (req, res) => {
         _id: signinUser.id,
         name: signinUser.name,
         email: signinUser.email,
-        isUser: signinUser.isUser,
+        isAdmin: signinUser.isAdmin,
         token: getToken(signinUser),
       });
     } else {
@@ -98,13 +98,13 @@ router.post(
   }
 );
 
-router.get("/createUser", async (req, res) => {
+router.get("/createadmin", async (req, res) => {
   try {
     const user = new User({
       name: "Satyaki",
       email: "sat@ki.com",
       password: "12345",
-      isUser: true,
+      isadmin: true,
     });
 
     const newUser = await user.save();
